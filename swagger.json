@@ -1,0 +1,145 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Pokemon API",
+    "description": "API to manage Pokemon data, built with Node.js and Express.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "summary": "Login to get an access token",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "password": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Successful login" },
+          "400": { "description": "Invalid credentials" }
+        }
+      }
+    },
+    "/pokemon": {
+      "get": {
+        "summary": "Get all Pokemon (paginated and cached)",
+        "tags": ["Pokemon"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": { "type": "integer" },
+            "required": false,
+            "description": "Page number (max 20 items per page)"
+          }
+        ],
+        "responses": {
+          "200": { "description": "A paginated list of Pokemon" }
+        }
+      },
+      "post": {
+        "summary": "Add a new Pokemon",
+        "tags": ["Pokemon"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "url": { "type": "string" },
+                  "description": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Pokemon created" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/pokemon/{id}": {
+      "put": {
+        "summary": "Update a Pokemon by ID",
+        "tags": ["Pokemon"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": { "type": "integer" },
+            "description": "Pokemon ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "url": { "type": "string" },
+                  "description": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Pokemon updated" },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "Pokemon not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete a Pokemon by ID",
+        "tags": ["Pokemon"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": { "type": "integer" },
+            "description": "Pokemon ID"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Pokemon deleted" },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "Pokemon not found" }
+        }
+      }
+    }
+  }
+}
