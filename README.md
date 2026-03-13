@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Pokemon API Backend Project
 
 This is a backend API providing data about > 1,000 different Pokémon.
@@ -99,3 +100,6 @@ To deploy this project for $0 using AWS EC2:
 
 5. **Test Your Live API:**
    - In your browser, open `http://<your-ec2-public-ip>:3000/api-docs` to view your hosted API!
+=======
+# Pokemon-api
+>>>>>>> e59433a267bb576b527eb5429fecf8d549a2db78
