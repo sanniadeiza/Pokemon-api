@@ -1,9 +1,13 @@
 const redis = require('redis');
 
+const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+const isTLS = redisUrl.startsWith('rediss://');
+
 // Initialize Redis Client
 const client = redis.createClient({
-    url: process.env.REDIS_URL || 'redis://localhost:6379',
+    url: redisUrl,
     socket: {
+        tls: isTLS,         // Required for Upstash (rediss://)
         reconnectStrategy: false // Disable reconnect so it fails gracefully once
     }
 });
