@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Pokemon API Backend Project
 
 This is a backend API providing data about > 1,000 different Pokémon.
@@ -12,7 +11,7 @@ This is a backend API providing data about > 1,000 different Pokémon.
 
 ## Prerequisites
 1. [Node.js](https://nodejs.org/) installed on your machine.
-2. [Redis](https://redis.io/download) installed and running locally for caching to work (the API will still function and bypass caching if Redis is offline).
+2. [Redis](https://redis.io/download) installed and running (or use Upstash as configured in `.env`).
 
 ## Setup & Installation
 
@@ -31,22 +30,24 @@ This is a backend API providing data about > 1,000 different Pokémon.
    ```bash
    npm start
    ```
-   (Starts server on port 3000)
+   (Starts server on port 8000 by default)
 
 ## API Documentation
 
 ### Swagger UI
-The easiest way to view the API documentation and test endpoints is through Swagger. Once the server is running, navigate to:  
-[http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+Once the server is running, navigate to:  
+[http://localhost:8000/api-docs](http://localhost:8000/api-docs)
 
-### Postman Documentation Guide
-To document this API using Postman:
-1. Open up Postman and create a new **Workspace** > **Blank Collection**. Name it "Pokemon API".
-2. **Add a GET request:** Click "Add a request", set the method to `GET`, URL to `http://localhost:3000/api/pokemon?page=1` and save it to the collection.
-3. **Add a Login request:** Set method to `POST`, URL to `http://localhost:3000/api/auth/login`. In the `Body` tab, choose `raw` and `JSON`, and paste: `{"username": "admin", "password": "password"}`.
-4. **Publish Documentation:** Click on your collection name to open the overview tab, find the `...` menu, and select **View Documentation**. Click **Publish** on the top right. 
-5. Add your generated Postman URL here:  
-   **[Link to my Postman Docs](#)**
+### Postman Documentation
+To get your public Postman documentation link:
+1. In Postman, open your **Collection**.
+2. Click the **"..." (More actions)** menu next to the collection name.
+3. Select **"Share"**.
+4. Click the **"Publish"** tab.
+5. Click the orange **"Publish"** button to generate a public URL.
+6. Copy that URL and paste it below:
+
+**[Link to Postman Documentation](PASTE_YOUR_LINK_HERE)**
 
 ## Features Implemented
 
@@ -56,7 +57,7 @@ To document this API using Postman:
   - JWT Authentication on Admin routes (`POST`, `PUT`, `DELETE`).
   - Read operations (`GET`) are public.
   - Pagination implemented (max 20 per page).
-  - Redis cache implemented to intercept `GET` request URLs and cache them for 1 hour.
+  - Redis cache implemented with TLS support (Upstash compatible).
   - Swagger UI documentation built-in.
 
 ---
@@ -67,39 +68,34 @@ To deploy this project for $0 using AWS EC2:
 
 1. **Create an EC2 Instance:**
    - Log into AWS Console and go to **EC2** > **Launch Instance**.
-   - Choose **Ubuntu Server 22.04 LTS** (which is Free Tier eligible).
+   - Choose **Ubuntu Server 22.04 LTS** (Free Tier eligible).
    - Choose instance type **t2.micro**.
-   - Create a new Key Pair (.pem) and download it to SSH into the machine later.
-   - Under **Network Settings**, click Edit. Add a Security Group rule allowing **Custom TCP** on port `3000` from Anywhere (`0.0.0.0/0`), as well as allowing SSH (port 22).
-   - Launch Instance.
+   - Create a new Key Pair (.pem) and download it.
+   - Under **Network Settings**, add a Security Group rule allowing **Custom TCP** on port `8000` from Anywhere (`0.0.0.0/0`), as well as SSH (port 22).
 
 2. **Push to GitHub:**
    - Initialize a local git repository. 
-   - Create a `.gitignore` file and add `node_modules/` and `.env` to it.
-   - Commit your code and push it up to a new public GitHub repository.
+   - Ensure `.gitignore` includes `node_modules/` and `.env`.
+   - Push your code to a public GitHub repository.
 
 3. **SSH into EC2 and Setup:**
-   - On your local terminal, navigate to where you saved the `.pem` file from step 1.
    - Run: `ssh -i "your-key.pem" ubuntu@<your-ec2-public-ip>`
-   - Once inside the server, update packages and install Node and Redis:
+   - Install Node and Redis:
      ```bash
      sudo apt update && sudo apt upgrade -y
      sudo apt install nodejs npm redis-server -y
      ```
 
 4. **Clone and Run the App:**
-   - Clone your github repository: `git clone <your-repo-url>`
+   - `git clone <your-repo-url>`
    - `cd pokemon-api`
    - `npm install`
-   - Fetch the data: `node scripts/fetchData.js`
-   - Start the server using a process manager like PM2 so it runs in the background:
+   - `node scripts/fetchData.js`
+   - Start using PM2:
      ```bash
      sudo npm install -g pm2
      pm2 start server.js
      ```
 
 5. **Test Your Live API:**
-   - In your browser, open `http://<your-ec2-public-ip>:3000/api-docs` to view your hosted API!
-=======
-# Pokemon-api
->>>>>>> e59433a267bb576b527eb5429fecf8d549a2db78
+   - Open `http://<your-ec2-public-ip>:8000/api-docs` to view your hosted API!

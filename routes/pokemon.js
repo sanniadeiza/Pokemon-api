@@ -3,7 +3,7 @@ const router = express.Router();
 const fs = require('fs');
 const path = require('path');
 const authMiddleware = require('../middleware/auth');
-const { cacheMiddleware } = require('../middleware/cache');
+const { cacheMiddleware, clearCache } = require('../middleware/cache');
 
 const dataFile = path.join(__dirname, '../data/pokemon.json');
 
@@ -60,7 +60,7 @@ router.get('/', cacheMiddleware, (req, res) => {
  * @desc Add a new pokemon
  * @access Private (Admin)
  */
-router.post('/', authMiddleware, (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
     const { name, url, description } = req.body;
     
     if (!name) {
@@ -79,6 +79,7 @@ router.post('/', authMiddleware, (req, res) => {
 
     pokemons.push(newPokemon);
     writeData(pokemons);
+    await clearCache();
 
     res.status(201).json(newPokemon);
 });
@@ -88,13 +89,17 @@ router.post('/', authMiddleware, (req, res) => {
  * @desc Update a pokemon
  * @access Private (Admin)
  */
-router.put('/:id', authMiddleware, (req, res) => {
+router.put('/:id', authMiddleware, async (req, res) => {
     const { name, url, description } = req.body;
     const pokemons = readData();
     const index = pokemons.findIndex(p => p.id === parseInt(req.params.id));
 
     if (index === -1) {
         return res.status(404).json({ message: 'Pokemon not found' });
+    }
+
+    if (!name && !url && !description) {
+        return res.status(400).json({ message: 'At least one field (name, url, or description) is required to update' });
     }
 
     const updatedPokemon = {
@@ -106,6 +111,7 @@ router.put('/:id', authMiddleware, (req, res) => {
 
     pokemons[index] = updatedPokemon;
     writeData(pokemons);
+    await clearCache();
 
     res.json(updatedPokemon);
 });
@@ -115,7 +121,7 @@ router.put('/:id', authMiddleware, (req, res) => {
  * @desc Delete a pokemon
  * @access Private (Admin)
  */
-router.delete('/:id', authMiddleware, (req, res) => {
+router.delete('/:id', authMiddleware, async (req, res) => {
     const pokemons = readData();
     const index = pokemons.findIndex(p => p.id === parseInt(req.params.id));
 
@@ -125,6 +131,7 @@ router.delete('/:id', authMiddleware, (req, res) => {
 
     const deletedPokemon = pokemons.splice(index, 1);
     writeData(pokemons);
+    await clearCache();
 
     res.json({ message: 'Pokemon deleted successfully', deleted: deletedPokemon[0] });
 });

@@ -65,4 +65,17 @@ const cacheMiddleware = async (req, res, next) => {
     }
 };
 
-module.exports = { client, cacheMiddleware };
+const clearCache = async () => {
+    if (!client.isOpen) return;
+    try {
+        const keys = await client.keys('cache:*');
+        if (keys.length > 0) {
+            await client.del(keys);
+            console.log(`Cleared ${keys.length} cache keys`);
+        }
+    } catch (error) {
+        console.error('Error clearing cache:', error);
+    }
+};
+
+module.exports = { client, cacheMiddleware, clearCache };
