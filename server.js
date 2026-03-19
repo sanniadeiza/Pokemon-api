@@ -26,8 +26,12 @@ app.get('/', (req, res) => {
     res.send('Welcome to the Pokemon API! Visit /api-docs for documentation.');
 });
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-    console.log(`Swagger docs available at http://localhost:${PORT}/api-docs`);
-});
+// Start server only if run directly
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+        console.log(`Swagger docs available at http://localhost:${PORT}/api-docs`);
+    });
+}
+
+module.exports = app;
